@@ -1,0 +1,9 @@
+$ docker build -t my-php-app .
+$ docker run -d --name my-running-app my-php-app
+
+
+$ Start 
+docker run -d -p 9090:80 php:7.0-apache
+
+# -d = en arrière plan
+# -p = 9090:80 => le port 9090 sera mapé sur le port 80
