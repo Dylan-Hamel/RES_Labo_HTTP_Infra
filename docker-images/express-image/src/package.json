@@ -1,0 +1,15 @@
+{
+  "name": "student-dh-ya",
+  "version": "1.0.0",
+  "description": "Test RES YA + DH",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dylan Hamel",
+  "license": "ISC",
+  "dependencies": {
+    "chance": "^1.0.16",
+    "express": "^4.16.3"
+  }
+}
