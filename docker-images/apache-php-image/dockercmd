@@ -7,3 +7,34 @@ docker run -d -p 9090:80 php:7.0-apache
 
 # -d = en arrière plan
 # -p = 9090:80 => le port 9090 sera mapé sur le port 80
+
+
+# Lister les container Docker
+docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+918eba74821c        php:7.0-apache      "docker-php-entrypoi…"   6 minutes ago       Up 6 minutes        0.0.0.0:9090->80/tcp   musing_brahmagupta
+
+
+# Obtenir les informations sur le container 
+docker insepect musing_brahmagupta
+docker instpect +NamePS
+
+
+# se connecter sur le container 
+docker exec -it musing_brahmagupta /bin/bash
+
+#➜  apache-php-image git:(master) ✗ docker exec -it musing_brahmagupta /bin/bash
+#root@918eba74821c:/var/www/html#
+
+
+# Détruire un container 
+docker kill musing_brahmagupta
+
+# Liste des containers lancé
+➜  express-image git:(master) ✗ docker ps -a
+CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS                           PORTS               NAMES
+081e61a2939a        res/express_student   "node /opt/app/index…"   9 seconds ago       Exited (0) 12 seconds ago                            nostalgic_bartik
+f6764e7de28e        res/express_student   "node /opt/app/index…"   11 seconds ago      Exited (0) 14 seconds ago                            upbeat_curie
+47603c5e2c00        res/apache_php        "docker-php-entrypoi…"   About an hour ago   Exited (137) 4 minutes ago                           focused_hamilton
+918eba74821c        php:7.0-apache        "docker-php-entrypoi…"   2 hours ago         Exited (137) About an hour ago                       musing_brahmagupta
+➜  express-image git:(master) ✗
