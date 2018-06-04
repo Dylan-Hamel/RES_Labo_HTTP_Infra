@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+echo "Start setup RES"
+echo "Static app URL: $STATIC_APP"
+echo "Dynamic app URL: $DYNAMIC_APP"
+
+#cp /var/apache2/template/config-template.php /etc/apache2/sites-available/001-reverse-proxy.conf
+php /var/apache2/template/config-template.php > /etc/apache2/sites-available/001-reverse-proxy.conf
+
+rm -f /var/run/apache2/apache2.pid
+exec apache2 -DFOREGROUND
