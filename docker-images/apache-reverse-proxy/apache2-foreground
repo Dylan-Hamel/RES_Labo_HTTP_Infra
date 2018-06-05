@@ -9,4 +9,4 @@ echo "Dynamic app URL: $DYNAMIC_APP"
 php /var/apache2/template/config-template.php > /etc/apache2/sites-available/001-reverse-proxy.conf
 
 rm -f /var/run/apache2/apache2.pid
-exec apache2 -DFOREGROUND
+exec apache2 -D FOREGROUND
