@@ -5,7 +5,8 @@ set -e
 echo "Setup for the res lab..."
 echo "Statc app URL: $STATIC_APP"
 echo "Dynamic app URL: $DYNAMIC_APP"
-
+echo "Statc app URL: $STATIC_APP2"
+echo "Dynamic app URL: $DYNAMIC_APP2"
 
 # Note: we don't just use "apache2ctl" here because it itself is just a shell-script wrapper around apache2 which provides extra functionality like "apache2ctl start" for launching apache2 in the background.
 # (also, when run as "apache2ctl <apache args>", it does not use "exec", which leaves an undesirable resident shell process)
@@ -44,7 +45,6 @@ for e in "${!APACHE_@}"; do
 done
 
 
-php /var/apache2/templates/config-template.php > /etc/apache2/sites-available/001-reverse-proxy.conf
+php /var/apache2/template/config-template.php > /etc/apache2/sites-available/001-reverse-proxy.conf
 
 exec apache2 -DFOREGROUND "$@"
-echo END

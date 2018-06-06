@@ -21,11 +21,8 @@ fi
 : "${APACHE_PID_FILE:=$APACHE_RUN_DIR/apache2.pid}"
 rm -f "$APACHE_PID_FILE"
 
-echo "rm -f APACHE_PID_FILE"
-
 # create missing directories
 # (especially APACHE_RUN_DIR, APACHE_LOCK_DIR, and APACHE_LOG_DIR)
-echo "LOOP"
 for e in "${!APACHE_@}"; do
 	if [[ "$e" == *_DIR ]] && [[ "${!e}" == /* ]]; then
 		# handle "/var/lock" being a symlink to "/run/lock", but "/run/lock" not existing beforehand, so "/var/lock/something" fails to mkdir
@@ -46,9 +43,7 @@ for e in "${!APACHE_@}"; do
 	fi
 done
 
-echo "Copy config-template 001-reverse-proxy.conf"
-php /var/apache2/templates/config-template.php > /etc/apache2/sites-available/001-reverse-proxy.conf
+echo "Read apache template"
+php /var/apache2/template/config-template.php > /etc/apache2/sites-available/001-reverse-proxy.conf
 
-echo "exec apache2 -DFOREGROUND"
 exec apache2 -DFOREGROUND "$@"
-
