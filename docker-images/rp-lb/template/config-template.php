@@ -1,62 +1,45 @@
 <?php
   	$ip_static = getenv('STATIC_APP');
+	$ip_static2 = getenv('STATIC_APP2');
 	$ip_dyn = getenv('DYNAMIC_APP');
+	$ip_dyn2 = getenv('DYNAMIC_APP2');
 ?>
 
 <VirtualHost *:80>
+	ProxyRequests off
         ServerName demo.res.ch
 
-	<Proxy balancer://mycluster>
-                # Express Dynamic
-                BalancerMember http://<?php print "$ip_dyn";?>/
-                # Static Apache
-                BalancerMember http://<?php print "$ip_static";?>
+	<Proxy balancer://apache-php>
+		# Static
+                BalancerMember 'http://<?php print "$ip_static"?>/'
+		# Static
+                BalancerMember 'http://<?php print "$ip_static2"?>/'
+	</Proxy>
 
-                # Security "technically we aren't blocking
-                # anyone but this is the place to make
-                # those changes.
-                Require all granted
-                # In this example all requests are allowed.
 
-                # Load Balancer Settings
-                # We will be configuring a simple Round
-                # Robin style load balancer.  This means
-                # that all webheads take an equal share of
-                # of the load.
-                ProxySet lbmethod=byrequests
-
+	<Proxy balancer://express-dyn>
+                # Dynamic
+                BalancerMember 'http://<?php print "$ip_dyn"?>/'
+		# Dynamic
+                BalancerMember 'http://<?php print "$ip_dyn2"?>/'
         </Proxy>
 
-        # balancer-manager
-        # This tool is built into the mod_proxy_balancer
-        # module and will allow you to do some simple
-        # modifications to the balanced group via a gui
-        # web interface.
-        <Location /balancer-manager>
-                SetHandler balancer-manager
 
-                # I recommend locking this one down to your
-                # your office
-                Require host example.org
+	<Location "/balancer-manager">
+		SetHandler balancer-manager
+		Require host demo.res.ch
+	</Location>
 
-        </Location>
-
-        # Point of Balance
-        # This setting will allow to explicitly name the
-        # the location in the site that we want to be
-        # balanced, in this example we will balance "/"
-        # or everything in the site.
-        ProxyPass /balancer-manager !
-        ProxyPass / balancer://mycluster/
 	
 
         #ErrorLog ${APACHE_LOG_DIR}/error.log
         #CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-        ProxyPass '/api/students/' 'http://<?php print "$ip_dyn";?>/'
-        ProxyPassReverse '/api/sutdents' 'http://<?php print "$ip_dyn";?>/'
+	ProxyPass "/api/students/" "balancer://express-dyn"
+	ProxyPassReverse "/api/students/" "balancer://express-dyn"
 
-        ProxyPass '/static/' 'http://<?php print "$ip_static";?>/'
-        ProxyPassReverse '/static/' 'http://<?php print "$ip_static";?>/'
+	ProxyPass "/" "balancer:/apache-php"
+	ProxyPassReverse "/" "balancer://apache-php"
+
 
 </VirtualHost>
