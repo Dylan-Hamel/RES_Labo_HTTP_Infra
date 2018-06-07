@@ -10,9 +10,9 @@
 
 	<Proxy "balancer://apache-php">
 		# Static
-                BalancerMember 'http://<?php print "$ip_static"?>'
+                BalancerMember 'http://<?php print "$ip_static"?>' route=1
 		# Static
-                BalancerMember 'http://<?php print "$ip_static2"?>'
+                BalancerMember 'http://<?php print "$ip_static2"?>' route=2
 	</Proxy>
 
 
@@ -23,13 +23,13 @@
                 BalancerMember 'http://<?php print "$ip_dyn2"?>'
         </Proxy>
 	
-	ProxyPass "/api/students/" "balancer://express-dyn"
-	ProxyPassReverse "/api/students/" "balancer://express-dyn"
+	ProxyPass /api/students/ balancer://express-dyn
+	ProxyPassReverse /api/students/ balancer://express-dyn
 
 	Header add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/" env=BALANCER_ROUTE_CHANGED	
 
-	ProxyPass "/" "balancer://apache-php" stickysession=ROUTEID
-	ProxyPassReverse "/" "balancer://apache-php"
+	ProxyPass / balancer://apache-php stickysession=ROUTEID
+	ProxyPassReverse / balancer://apache-php
 
         <Location "/balancer-manager">
                 SetHandler balancer-manager
