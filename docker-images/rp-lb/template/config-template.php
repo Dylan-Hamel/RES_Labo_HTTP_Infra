@@ -26,7 +26,9 @@
 	ProxyPass "/api/students/" "balancer://express-dyn"
 	ProxyPassReverse "/api/students/" "balancer://express-dyn"
 
-	ProxyPass "/" "balancer://apache-php"
+	Header add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/" env=BALANCER_ROUTE_CHANGED	
+
+	ProxyPass "/" "balancer://apache-php" stickysession=ROUTEID
 	ProxyPassReverse "/" "balancer://apache-php"
 
         <Location "/balancer-manager">
