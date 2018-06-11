@@ -202,6 +202,8 @@ d6fa0903f4eb        res/apache_php         "docker-php-entrypoi…"   About an h
 
 ![Capture d’écran 2018-05-28 à 21.12.38](/Users/dylan.hamel/Desktop/Capture d’écran 2018-05-28 à 21.12.38.png)
 
+![ipv62](/Volumes/Data/HEIG_VD/RES/Labo/_Projet/images/ipv62.png)
+
 
 
 ## Créer un container docker avec un Reverse Proxy Apache
@@ -298,7 +300,7 @@ docker run -d -p 8080:80 res/apache_rp
 
 Vérfication du bon fonctionnement du Reverse Proxy :
 
-![Capture d’écran 2018-05-28 à 21.23.02](/Users/dylan.hamel/Desktop/Capture d’écran 2018-05-28 à 21.23.02.png)
+![Capture d'écran 2018-05-28 à 21.23.02](/Volumes/Data/HEIG_VD/RES/Labo/_Projet/images/express_01.png)
 
 ![Capture d’écran 2018-05-28 à 21.23.27](/Users/dylan.hamel/Desktop/Capture d’écran 2018-05-28 à 21.23.27.png)
 
@@ -475,6 +477,77 @@ function generateStudents() {
 }
 ```
 
+#### Nous avons utilisé une génération aléatoire d'ipv6 :
+
+```javascript
+var Chance = require('chance');
+var chance = new Chance();
+
+var express = require('express');
+var app = express();
+
+app.get('/', function(request, respond) {
+        respond.send(generateCommand());
+
+});
+
+app.listen(3000, function() {
+        console.log("Accept HTTP requests");
+});
+
+
+function generateCommand() {
+        var numberOfCommand = chance.integer({min:0,max:10});
+        console.log(numberOfCommand);
+        var commands = [];
+        for (var i=0;i<numberOfCommand;i++) {
+                commands.push({IPV6:chance.ipv6()});
+        };
+        console.log(commands);
+        return commands;
+}
+```
+
+```bash
+    <!-- Custom JavaScript to load Students -->
+    <script src="js/ipv6.js"></script>
+```
+
+```bash
+<VirtualHost *:80>
+        ServerName demo.res.ch
+
+        #ErrorLog ${APACHE_LOG_DIR}/error.log
+        #CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        ProxyPass "/api/ipv6/" "http://172.17.0.3:3000/"
+        ProxyPassReverse "/api/ipv6/" "http://172.17.0.3:3000/"
+
+        ProxyPass "/" "http://172.17.0.2/"
+        ProxyPassReverse "/" "http://172.17.0.2/"
+
+</VirtualHost>
+```
+
+```javascript
+$(function() {
+        console.log("Loading IPv6");
+
+    function loadCommand() {
+        $.getJSON( "/api/ipv6/", function( commands ) {
+            console.log(commands[0]);
+            var message = "Nobody is here";
+            if (commands.length > 0) {
+                message = commands[0].IPV6
+            }
+            $(".mb-3").text(message);
+        });
+    };
+    loadCommand();
+    setInterval( loadCommand, 1000);
+});
+```
+
 
 
 /!\ nous avons fait quelques erreures dans l'écriture de nos fonctions.
@@ -488,6 +561,8 @@ function generateStudents() {
 **Résultat :**
 
 ![photo03](/Volumes/Data/HEIG_VD/RES/Labo/_Projet/images/photo03.png)
+
+![ipv6](/Volumes/Data/HEIG_VD/RES/Labo/_Projet/images/ipv6.png)
 
 
 
@@ -725,6 +800,8 @@ Dynamic app URL: 172.17.0.3:3000
 ![rp01](/Volumes/Data/HEIG_VD/RES/Labo/_Projet/images/rp01.png)
 
 ![rp02](/Volumes/Data/HEIG_VD/RES/Labo/_Projet/images/rp02.png)
+
+
 
 
 
@@ -1224,6 +1301,34 @@ Tous les fichiers se trouvent sur le Github ci-dessous :
 
 ```
 https://github.com/Dylan-Hamel/RES_Labo_HTTP_Infra.git
+```
+
+
+
+## Résumé
+
+Lancer tous les containers Docker une fois qu'ils ont été buildés 
+
+```bash
+# IPV6
+
+# Express Dynamique
+http://demo.res.ch:9092/
+docker run -d -p 9092:3000 res/express_ipv6
+
+# Fichier statique 
+# http://demo.res.ch:9093/
+docker run -d -p 9093:80 res/apache_ipv6
+
+# Reverse Proxy
+# http://demo.res.ch:7070/
+docker run -d -p 7070:80 res/apache_rp_ipv6
+```
+
+```bash
+# Demarrer le Proxy Load-Balancer
+# Remplacer les adresse IP correctement
+# docker run -p 8888:80 -e STATIC_APP=172.17.0.2 -e STATIC_APP2=172.17.0.3 -e DYNAMIC_APP=172.17.0.4 -e DYNAMIC_APP2=172.17.0.5 -d res/rp-lb
 ```
 
 
