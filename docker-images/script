@@ -8,7 +8,7 @@ docker run -d res/express_dyn
 
 # Demarrer le Proxy Load-Balancer
 # Remplacer les adresse IP correctement
-docker run -p 8888:80 -e STATIC_APP=172.17.0.2 -e STATIC_APP2=172.17.0.3 -e DYNAMIC_APP=172.17.0.4 -e DYNAMIC_APP2=172.17.0.5 -d res/rp-lb
+# docker run -p 8888:80 -e STATIC_APP=172.17.0.2 -e STATIC_APP2=172.17.0.3 -e DYNAMIC_APP=172.17.0.4 -e DYNAMIC_APP2=172.17.0.5 -d res/rp-lb
 
 # Message a l'utilisateur
 echo "Changer la configuration d'un des serveur apache pour voir le fonctionnement du load-balancer"
